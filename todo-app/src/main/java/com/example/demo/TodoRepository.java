@@ -23,7 +23,7 @@ public class TodoRepository {
 		todos.add(todo);
 		return todo;
 	}
-	
+
 	//IDから検索
 	public Todo findById(Long id) {
 		for (Todo todo : todos) {
@@ -32,5 +32,15 @@ public class TodoRepository {
 			}
 		}
 		return null;
+	}
+
+	//IDから削除
+	public List<Todo> deleteTodo(Long id) {
+		Todo todo = findById(id);
+		if (todo != null) {
+			todos.remove(todo);
+		}
+
+		return todos;
 	}
 }
