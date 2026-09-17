@@ -2,6 +2,7 @@ package com.example.demo;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,28 +21,32 @@ public class TodoController {
 	}
 
 	@GetMapping("/todos")
-	public List<Todo> getTodoList() {
-		return todoRepository.findAll();
+	public ResponseEntity<List<Todo>> getTodoList() {
+		return ResponseEntity.ok(todoRepository.findAll());
 	}
 
 	@PostMapping("/todos")
-	public Todo createTodo(@RequestBody Todo newTodo) {
-		return todoRepository.save(newTodo);
+	public ResponseEntity<Todo> createTodo(@RequestBody Todo newTodo) {
+		return ResponseEntity.ok(todoRepository.save(newTodo));
 	}
 
 	@PatchMapping("/todos/{id}")
-	public Todo patchTodo(@PathVariable Long id) {
+	public ResponseEntity<Todo> patchTodo(@PathVariable Long id) {
 		Todo todo = todoRepository.findById(id);
 		if (todo == null) {
-			return null;
+			return ResponseEntity.notFound().build();
 		}
 		todo.setCompleted(!todo.isCompleted());
-		return todo;
+		return ResponseEntity.ok(todo);
 	}
 
 	@DeleteMapping("/todos/{id}")
-	public List<Todo> deleteTodo(@PathVariable Long id) {
+	public ResponseEntity<List<Todo>> deleteTodo(@PathVariable Long id) {
+		Todo todo = todoRepository.findById(id);
+		if (todo == null) {
+			return ResponseEntity.notFound().build();
+		}
 		todoRepository.deleteTodo(id);
-		return todoRepository.findAll();
+		return ResponseEntity.ok(todoRepository.findAll());
 	}
 }
