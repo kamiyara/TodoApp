@@ -43,4 +43,10 @@ public class TodoRepository {
 
 		return todos;
 	}
+
+	//初期化(Test用)
+	public void deleteAll() {
+		todos.clear();
+		nextId = 1;
+	}
 }
