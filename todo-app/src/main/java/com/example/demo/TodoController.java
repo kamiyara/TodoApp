@@ -27,6 +27,9 @@ public class TodoController {
 
 	@PostMapping("/todos")
 	public ResponseEntity<Todo> createTodo(@RequestBody Todo newTodo) {
+		if (newTodo.getTitle() == null || newTodo.getTitle().isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}
 		return ResponseEntity.ok(todoRepository.save(newTodo));
 	}
 

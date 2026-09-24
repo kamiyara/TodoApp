@@ -36,7 +36,25 @@ class TodoControllerTest {
 		mockMvc.perform(post("/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"title\":\"テスト用Todo\"}"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.title").value("テスト用Todo"))
+				.andExpect(jsonPath("$.completed").value(false));
+	}
+
+	@Test
+	void ID作成時タイトルが空の場合は400を返す() throws Exception {
+		mockMvc.perform(post("/todos")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"title\":\"\"}"))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void ID作成時タイトルがnullの場合は400を返す() throws Exception {
+		mockMvc.perform(post("/todos")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}"))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -47,7 +65,8 @@ class TodoControllerTest {
 				.andExpect(status().isOk());
 
 		mockMvc.perform(patch("/todos/1"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.completed").value(true));
 	}
 
 	@Test
@@ -60,11 +79,18 @@ class TodoControllerTest {
 	void ID削除は要素があれば200を返す() throws Exception {
 		mockMvc.perform(post("/todos")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"title\":\"テスト用Todo\"}"))
+				.content("{\"title\":\"削除されるTodo\"}"))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/todos")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"title\":\"削除されずに残るTodo\"}"))
 				.andExpect(status().isOk());
 
 		mockMvc.perform(delete("/todos/1"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(1))
+				.andExpect(jsonPath("$[0].title").value("削除されずに残るTodo"));
 	}
 
 	@Test
