@@ -10,7 +10,8 @@ public class Todo {
 		this.title = title;
 		this.completed = false;
 	}
-
+	
+	//Getter
 	public Long getId() {
 		return id;
 	}
@@ -22,7 +23,8 @@ public class Todo {
 	public boolean isCompleted() {
 		return completed;
 	}
-
+	
+	//Setter
 	public void setId(Long id) {
 		this.id = id;
 	}

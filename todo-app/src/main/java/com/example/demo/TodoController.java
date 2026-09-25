@@ -14,42 +14,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TodoController {
 
-	private final TodoRepository todoRepository;
+	private final TodoService todoService;
 
-	public TodoController(TodoRepository todoRepository) {
-		this.todoRepository = todoRepository;
+	public TodoController(TodoService todoService) {
+		this.todoService = todoService;
+
 	}
 
 	@GetMapping("/todos")
 	public ResponseEntity<List<Todo>> getTodoList() {
-		return ResponseEntity.ok(todoRepository.findAll());
+		return ResponseEntity.ok(todoService.findAll());
 	}
 
 	@PostMapping("/todos")
 	public ResponseEntity<Todo> createTodo(@RequestBody Todo newTodo) {
-		if (newTodo.getTitle() == null || newTodo.getTitle().isEmpty()) {
+		Todo createdTodo = todoService.createNewTodo(newTodo);
+		if (createdTodo == null) {
 			return ResponseEntity.badRequest().build();
+		} else {
+			return ResponseEntity.ok(createdTodo);
 		}
-		return ResponseEntity.ok(todoRepository.save(newTodo));
 	}
 
 	@PatchMapping("/todos/{id}")
 	public ResponseEntity<Todo> patchTodo(@PathVariable Long id) {
-		Todo todo = todoRepository.findById(id);
+		Todo todo = todoService.reverseCompletedById(id);
 		if (todo == null) {
 			return ResponseEntity.notFound().build();
+		} else {
+			return ResponseEntity.ok(todo);
 		}
-		todo.setCompleted(!todo.isCompleted());
-		return ResponseEntity.ok(todo);
 	}
 
 	@DeleteMapping("/todos/{id}")
 	public ResponseEntity<List<Todo>> deleteTodo(@PathVariable Long id) {
-		Todo todo = todoRepository.findById(id);
-		if (todo == null) {
+		List<Todo> todos = todoService.deleteTodoById(id);
+		if (todos == null) {
 			return ResponseEntity.notFound().build();
+		} else {
+			return ResponseEntity.ok(todos);
 		}
-		todoRepository.deleteTodo(id);
-		return ResponseEntity.ok(todoRepository.findAll());
 	}
 }
