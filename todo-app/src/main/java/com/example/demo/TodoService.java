@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -28,21 +29,23 @@ public class TodoService {
 
 	//Todoの完了を反転する
 	public Todo reverseCompletedById(Long id) {
-		Todo todo = todoRepository.findById(id);
-		if (!(todo == null)) {
-			todo.setCompleted(!todo.isCompleted());
+		Optional<Todo> result = todoRepository.findById(id);
+		if (result.isEmpty()) {
+			return null;
 		}
-		return todo;
+		Todo todo = result.get();
+		todo.setCompleted(!todo.isCompleted());
+		return todoRepository.save(todo);
 	}
 
 	//Todoを削除する
 	public List<Todo> deleteTodoById(Long id) {
-		Todo todo = todoRepository.findById(id);
-		if (!(todo == null)) {
-			return todoRepository.deleteTodo(id);
-		} else {
+		Optional<Todo> result = todoRepository.findById(id);
+		if (result.isEmpty()) {
 			return null;
 		}
+		todoRepository.deleteById(id);
+		return todoRepository.findAll();
 	}
 
 }

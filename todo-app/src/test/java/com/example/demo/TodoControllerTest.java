@@ -11,6 +11,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import tools.jackson.databind.ObjectMapper;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class TodoControllerTest {
@@ -59,12 +61,17 @@ class TodoControllerTest {
 
 	@Test
 	void IDの完了切り替えは要素があれば200を返す() throws Exception {
-		mockMvc.perform(post("/todos")
+		String response = mockMvc.perform(post("/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"title\":\"テスト用Todo\"}"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
 
-		mockMvc.perform(patch("/todos/1"))
+		Todo createdTodo = new ObjectMapper().readValue(response, Todo.class);
+
+		mockMvc.perform(patch("/todos/" + createdTodo.getId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.completed").value(true));
 	}
@@ -77,17 +84,25 @@ class TodoControllerTest {
 
 	@Test
 	void ID削除は要素があれば200を返す() throws Exception {
-		mockMvc.perform(post("/todos")
+		String response1 = mockMvc.perform(post("/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"title\":\"削除されるTodo\"}"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		Todo createdTodo1 = new ObjectMapper().readValue(response1, Todo.class);
 
-		mockMvc.perform(post("/todos")
+		String response2 = mockMvc.perform(post("/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"title\":\"削除されずに残るTodo\"}"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		Todo createdTodo2 = new ObjectMapper().readValue(response2, Todo.class);
 
-		mockMvc.perform(delete("/todos/1"))
+		mockMvc.perform(delete("/todos/" + createdTodo1.getId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(1))
 				.andExpect(jsonPath("$[0].title").value("削除されずに残るTodo"));

@@ -1,16 +1,30 @@
 package com.example.demo;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Todo {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String title;
 	private boolean completed;
+
+	public Todo() {
+
+	}
 
 	public Todo(Long id, String title) {
 		this.id = id;
 		this.title = title;
 		this.completed = false;
 	}
-	
+
 	//Getter
 	public Long getId() {
 		return id;
@@ -23,7 +37,7 @@ public class Todo {
 	public boolean isCompleted() {
 		return completed;
 	}
-	
+
 	//Setter
 	public void setId(Long id) {
 		this.id = id;
