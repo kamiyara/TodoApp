@@ -18,7 +18,7 @@ public class SecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/register").permitAll()
+						.requestMatchers("/register","/debug/**").permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();

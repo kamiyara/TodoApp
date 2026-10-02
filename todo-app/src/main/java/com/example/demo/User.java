@@ -14,6 +14,9 @@ public class User {
 	private Long id;
 
 	private String username;
+	
+	//UserがJsonに変換される場合無視される（表示されない)
+	@com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
 	public User() {

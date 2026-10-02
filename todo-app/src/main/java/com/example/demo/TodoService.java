@@ -14,15 +14,16 @@ public class TodoService {
 	}
 
 	//Todoのリストを返す
-	public List<Todo> findAll() {
-		return todoRepository.findAll();
+	public List<Todo> findAll(User owner) {
+		return todoRepository.findByOwner(owner);
 	}
 
 	//Todoを新規作成
-	public Todo createNewTodo(Todo newTodo) {
+	public Todo createNewTodo(Todo newTodo, User owner) {
 		if (newTodo.getTitle() == null || newTodo.getTitle().isEmpty()) {
 			return null;
 		} else {
+			newTodo.setOwner(owner);
 			return todoRepository.save(newTodo);
 		}
 	}

@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Todo {
@@ -14,6 +15,9 @@ public class Todo {
 
 	private String title;
 	private boolean completed;
+	
+	@ManyToOne
+	private User owner;
 
 	public Todo() {
 
@@ -37,6 +41,10 @@ public class Todo {
 	public boolean isCompleted() {
 		return completed;
 	}
+	
+	public User getOwner() {
+		return owner;
+	}
 
 	//Setter
 	public void setId(Long id) {
@@ -50,5 +58,8 @@ public class Todo {
 	public void setCompleted(boolean completed) {
 		this.completed = completed;
 	}
+	
+	public void setOwner(User owner) {
+		this.owner=owner;}
 
 }
